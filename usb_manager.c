@@ -40,7 +40,8 @@ void unmount_usb(const char *mount_point)
 {
 	/*
 	 * umount(mount_point):
-	 * umount(): This system call unmounts a previously mounted file system from the directory specified by mount_point. After the unmount operation, the directory will no longer give access to the file system on the mounted device (like a USB drive).
+	 * umount(): This system call unmounts a previously mounted file system from the directory specified by mount_point.
+	 * After the unmount operation, the directory will no longer give access to the file system on the mounted device (like a USB drive).
 	 *  mount_point: This is the directory where the device was mounted (e.g., /mnt/usb).
     */
 	if(umount(mount_point) == -1)
