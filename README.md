@@ -70,9 +70,12 @@ The project resulted in a fully functional USB Mount Manager tool that:
 This tool is a valuable addition for systems requiring efficient USB device handling and can be further enhanced with features like GUI integration or support for advanced encryption methods in future iterations.
 
 ## How to use :
-  1.Install lib-magic library 
-  2.Run on command line :
-        make 
-  3. Then type on command line :
-        sudo ./usb
+  1.Install lib-magic library <br>
+  <pre>sudo apt-get update
+sudo apt-get install libmagic-dev
+</pre>
+  2.Run on command line :<br>
+    <pre>  make </pre><br>
+  3. Then type on command line :<br>
+      <pre>sudo ./usb</pre><br>
         
