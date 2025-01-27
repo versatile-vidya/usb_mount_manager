@@ -68,3 +68,11 @@ The project resulted in a fully functional USB Mount Manager tool that:
   6. Detects malicious files and offers options for editing or deleting them.
 
 This tool is a valuable addition for systems requiring efficient USB device handling and can be further enhanced with features like GUI integration or support for advanced encryption methods in future iterations.
+
+## How to use :
+  1.Install lib-magic library 
+  2.Run on command line :
+        make 
+  3. Then type on command line :
+        sudo ./usb
+        
