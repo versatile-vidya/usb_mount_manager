@@ -1,5 +1,7 @@
 #include "file_explorer.h"
 #include<sys/stat.h>
+
+//  ls
 void list_files(const char *path,int depth)
 {
 	//int depth =0;
@@ -57,6 +59,7 @@ void list_files(const char *path,int depth)
 
 }
 
+// cat
 void open_file(const char *file_path)
 {
 	FILE *fp = fopen(file_path,"r");
@@ -75,6 +78,7 @@ void open_file(const char *file_path)
 	}
 }
 
+// editor command i.e. vim 
 void edit_file(const char *file_path)
 {
     	char command[300];
@@ -85,7 +89,7 @@ void edit_file(const char *file_path)
 
 }
 
-
+// vim  to create file 
 void create_file(const char *path)
 {
 	char f_name[256];
@@ -127,3 +131,162 @@ void create_file(const char *path)
 	}
 }
 
+// Function to create a directory if it doesn't exist
+int create_directory(const char *dir_path) 
+{
+    	struct stat st = {0};
+    	if (stat(dir_path, &st) == -1)
+       	{
+        	if (mkdir(dir_path, 0700) != 0)
+	       	{
+            		perror("Failed to create directory");
+            		return -1;
+       	 	}
+        	printf("Directory created: %s\n", dir_path);
+    	}
+    	return 0;
+}
+
+// Function to delete a directory and its contents
+int delete_directory(const char *dir_path) 
+{
+    	DIR *dir = opendir(dir_path);
+    	if (!dir)
+       	{
+        	perror("Failed to open directory");
+        	return -1;
+    	}
+
+    	struct dirent *entry;
+    	char full_path[1024];
+
+    	while ((entry = readdir(dir)) != NULL) 
+	{
+        	// Skip '.' and '..' directories
+        	if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0) 
+		{
+            		continue;
+        	}
+
+        	// Construct the full path for the entry
+        	snprintf(full_path, sizeof(full_path), "%s/%s", dir_path, entry->d_name);
+
+        	struct stat statbuf;
+        	if (stat(full_path, &statbuf) == 0) 
+		{
+            		if (S_ISDIR(statbuf.st_mode)) 
+			{
+                		// Recursively delete subdirectory
+                		if (delete_directory(full_path) != 0) 
+				{
+                    			closedir(dir);
+                    			return -1;
+                		}
+           		}
+		       	else if (S_ISREG(statbuf.st_mode) || S_ISLNK(statbuf.st_mode)) 
+			{
+                		// Delete file or symbolic link
+                		if (unlink(full_path) != 0) 
+				{
+                    			perror("Failed to delete file");
+                   			closedir(dir);
+                    			return -1;
+               			}
+                		printf("Deleted file: %s\n", full_path);
+            		}
+        	}
+    	}
+
+    	closedir(dir);
+
+    	// Remove the now-empty directory
+    	if (rmdir(dir_path) != 0) 
+	{
+        	perror("Failed to remove directory");
+        	return -1;
+    	}
+
+    	printf("Deleted directory: %s\n", dir_path);
+    	return 0;
+}
+
+int delete_file(const char *file_path) 
+{
+    	struct stat statbuf;
+
+    	// Check if the file exists and is a regular file
+    	if (stat(file_path, &statbuf) != 0) 
+	{
+        	perror("File does not exist or cannot be accessed");
+        	return -1;
+    	}
+
+    	if (!S_ISREG(statbuf.st_mode))
+       	{
+        	fprintf(stderr, "Specified path is not a regular file: %s\n", file_path);
+        	return -1;
+    	}
+
+    	// Delete the file
+    	if (unlink(file_path) == 0) 
+	{
+        	printf("Successfully deleted file: %s\n", file_path);
+        	return 0;
+    	}
+	else
+       	{
+       		perror("Failed to delete file");
+        	return -1;
+    	}
+}
+
+
+// Function to search for a file in a directory and delete it if found
+int search_and_delete_file(const char *dir_path, const char *target_file) {
+    DIR *dir = opendir(dir_path);
+    if (!dir) {
+        perror("Failed to open directory");
+        return -1;
+    }
+
+    struct dirent *entry;
+    char full_path[1024];
+    int found = 0; // Flag to indicate if the file was found
+
+    while ((entry = readdir(dir)) != NULL) {
+        // Skip "." and ".."
+        if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0) {
+            continue;
+        }
+
+        // Construct the full path for the entry
+        snprintf(full_path, sizeof(full_path), "%s/%s", dir_path, entry->d_name);
+
+        struct stat statbuf;
+        if (stat(full_path, &statbuf) == 0) {
+            if (S_ISDIR(statbuf.st_mode)) {
+                // Recursively search in subdirectory
+                if (search_and_delete_file(full_path, target_file) == 1) {
+                    found = 1; // Mark as found if the file is located in a subdirectory
+                }
+            } else if (S_ISREG(statbuf.st_mode)) {
+                // Check if the current file matches the target file
+                if (strcmp(entry->d_name, target_file) == 0) {
+                    printf("File found: %s\n", full_path);
+                    // Delete the file
+                    if (unlink(full_path) == 0) {
+                        printf("File deleted: %s\n", full_path);
+                        found = 1; // File found and deleted
+                    } else {
+                        perror("Failed to delete file");
+                    }
+                }
+            }
+        } else {
+            perror("Failed to get file status");
+        }
+    }
+
+    closedir(dir);
+    return found;
+}
