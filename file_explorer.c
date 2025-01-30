@@ -1,5 +1,45 @@
 #include "file_explorer.h"
 #include<sys/stat.h>
+/*
+struct dirent {
+    ino_t d_ino;           // Inode number
+    off_t d_off;           // Offset to next directory entry
+    unsigned short d_reclen; // Length of this record
+    unsigned char d_type;  // Type of file
+    char d_name[];         // Null-terminated file name
+};
+Value	Description
+DT_REG	Regular file
+DT_DIR	Directory
+DT_LNK	Symbolic link
+DT_FIFO	Named pipe (FIFO)
+DT_SOCK	Socket
+DT_CHR	Character device
+DT_BLK	Block device
+
+struct stat {
+    dev_t     st_dev;      // ID of device containing file
+    ino_t     st_ino;      // Inode number
+    mode_t    st_mode;     // File mode (permissions & type)
+    nlink_t   st_nlink;    // Number of hard links
+    uid_t     st_uid;      // User ID (owner)
+    gid_t     st_gid;      // Group ID
+    dev_t     st_rdev;     // Device ID (if special file)
+    off_t     st_size;     // File size (bytes)
+    blksize_t st_blksize;  // Block size for filesystem I/O
+    blkcnt_t  st_blocks;   // Number of allocated blocks
+    time_t    st_atime;    // Last access time
+    time_t    st_mtime;    // Last modification time
+    time_t    st_ctime;    // Last status change time
+};
+S_ISREG(st_mode)   // Regular file
+S_ISDIR(st_mode)   // Directory
+S_ISLNK(st_mode)   // Symbolic link
+S_ISCHR(st_mode)   // Character device
+S_ISBLK(st_mode)   // Block device
+S_ISFIFO(st_mode)  // FIFO (pipe)
+S_ISSOCK(st_mode)  // Socket
+*/
 
 //  ls
 void list_files(const char *path,int depth)
