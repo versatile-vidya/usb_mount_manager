@@ -1,4 +1,4 @@
-# REPORT on USB File System Explorer (USB Mount Manager)
+#  USB File System Explorer (USB Mount Manager)
 
 ## Objective of the Project:
 
